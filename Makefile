@@ -36,3 +36,30 @@ Clean:
 	@$(MAKE) -C Pkgs  Clean
 	@echo
 
+
+RPM: Build
+	@echo "♦️ RPM Build"
+	@echo
+
+  # RPM
+	@rm -rf @RPM
+	@mkdir -p @RPM/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+  # JConf
+	@mkdir -p @RPM/SOURCES/jconf/{Inc,Lib}
+
+	@cp Pkgs/lib.qaos.jconf.dev/Inc/*   @RPM/SOURCES/jconf/Inc
+	@cp Pkgs/lib.qaos.jconf/@Out/Lib/*  @RPM/SOURCES/jconf/Lib
+
+	@tar czf @RPM/SOURCES/jconf.tar.gz  -C @RPM/SOURCES jconf
+
+	@cp jconf.spec @RPM/SPECS
+
+
+  # Create
+	@rpmbuild --quiet -ba @RPM/SPECS/jconf.spec --define "_topdir $$(pwd)/@RPM"
+
+
+	@echo "Successfuly Packed!"
+	@echo
+
