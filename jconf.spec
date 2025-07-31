@@ -1,5 +1,5 @@
 Name:           jconf
-Version:        0.9.1
+Version:        0.9.2
 Release:        1%{?dist}
 Summary:        Lightweight configuration library with binary/text format support
 
@@ -49,5 +49,5 @@ cp Inc/JConf.h %{buildroot}/usr/include/
 
 
 %changelog
-* Sat Jul 05 2025 Kadir Aydın <jixoid@gmail.com> - 0.9.1
-- Initial RPM build
+* 31/07/2025 Kadir Aydın <jixoid@gmail.com> - 0.9.2
+- Please see here https://github.com/Jixoid/JConf

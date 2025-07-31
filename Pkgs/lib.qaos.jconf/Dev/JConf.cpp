@@ -20,6 +20,8 @@
 #include <unordered_set>
 #include <fstream>
 #include <string.h>
+#include <algorithm>
+#include <utility> 
 
 #include "Basis.h"
 #include "JConf.h"
@@ -63,7 +65,7 @@ struct cStc: cObj
     Type = _c_Stc;
   }
 
-  unordered_map<string, cObj*> Stc;
+  vector<pair<string, cObj*>> Stc;
 };
 
 struct cArr: cObj
@@ -84,54 +86,54 @@ struct cArr: cObj
 
 // Is
 extern "C" bool jc_IsVal(jc_obj __Obj)
-  {
-    return (Obj->Type == _c_Val);
-  }
+{
+  return (Obj->Type == _c_Val);
+}
 
 extern "C" bool jc_IsStc(jc_obj __Obj)
-  {
-    return (Obj->Type == _c_Stc);
-  }
+{
+  return (Obj->Type == _c_Stc);
+}
 
 extern "C" bool jc_IsArr(jc_obj __Obj)
-  {
-    return (Obj->Type == _c_Arr);
-  }
+{
+  return (Obj->Type == _c_Arr);
+}
 
 
 
-  // New / Dis
+// New / Dis
 extern "C" jc_val  jc_NewVal()
-  {
-    return new cVal();
-  }
+{
+  return new cVal();
+}
 
 extern "C" void    jc_DisVal(jc_val __Obj)
-  {
-    delete Obj;
-  }
+{
+  delete Obj;
+}
 
 
 extern "C" jc_stc  jc_NewStc()
-  {
-    return new cStc();
-  }
+{
+  return new cStc();
+}
 
 extern "C" void    jc_DisStc(jc_stc __Obj)
-  {
-    delete Obj;
-  }
+{
+  delete Obj;
+}
 
 
 extern "C" jc_arr  jc_NewArr()
-  {
-    return new cArr();
-  }
+{
+  return new cArr();
+}
 
 extern "C" void    jc_DisArr(jc_arr __Obj)
-  {
-    delete Obj;
-  }
+{
+  delete Obj;
+}
 
 
 #undef Obj
@@ -170,29 +172,61 @@ extern "C" void    jc_DisStr(char *Str)
 }
 
 
+
 extern "C" jc_obj  jc_StcGet(jc_stc __Stc, const char* Name)
 {
-  auto it = SStc->Stc.find(Name);
-  
-  if (it != SStc->Stc.end())
-    return it->second;
+  for (auto &[Key, Val]: SStc->Stc)
+    if (Key == string(Name))
+      return Val;
 
   return Nil;
 }
 
 extern "C" bool    jc_StcSet(jc_stc __Stc, const char* Name, jc_obj Object)
 {
-  SStc->Stc[Name] = (cObj*)Object;
+  for (auto &[Key, Val]: SStc->Stc)
+    if (Key == string(Name))
+      return Val = (cObj*)Object;
+
+
+  SStc->Stc.push_back({string(Name), (cObj*)Object});
 
   return true;
 }
 
 extern "C" bool    jc_StcDel(jc_stc __Stc, const char* Name)
 {
-  SStc->Stc.erase(Name);
+  SStc->Stc.erase(
+
+    std::remove_if(SStc->Stc.begin(), SStc->Stc.end(),
+      [&](const auto &X) {
+        return X.first == std::string(Name);
+      }
+    ),  
+    SStc->Stc.end()
+  );
 
   return true;
 }
+
+extern "C" u32     jc_StcC  (jc_stc __Stc)
+{
+  return SStc->Stc.size();
+}
+
+extern "C" jc_obj  jc_StcInd(jc_stc __Stc, u32 Index, char** Name)
+{
+  size_t Len = strlen(SStc->Stc[Index].first.c_str());
+  *Name = (char*)malloc(Len+1);
+  if (*Name == Nil)
+    return Nil;
+
+  memcpy(*Name, SStc->Stc[Index].first.c_str(), Len+1);
+
+
+  return SStc->Stc[Index].second;
+}
+
 
 
 extern "C" u32     jc_ArrC   (jc_arr __Arr)
@@ -509,7 +543,7 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
         ((cArr*)Cov)->Arr.push_back(Val);
 
       ef (Cov->Type == _c_Stc)
-        ((cStc*)Cov)->Stc[Name] = Val;
+        ((cStc*)Cov)->Stc.push_back({Name, Val});
 
       Next();
     }
@@ -524,7 +558,7 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
         ((cArr*)Cov)->Arr.push_back(Stc);
       
       ef (Cov->Type == _c_Stc)
-        ((cStc*)Cov)->Stc[Name] = Stc;
+        ((cStc*)Cov)->Stc.push_back({Name, Stc});
 
         
       // Change root
@@ -543,7 +577,7 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
         ((cArr*)Cov)->Arr.push_back(Arr);
 
       ef (Cov->Type == _c_Stc)
-        ((cStc*)Cov)->Stc[Name] = Arr;
+        ((cStc*)Cov)->Stc.push_back({Name, Arr});
 
 
       // Change root
@@ -674,15 +708,15 @@ extern "C" jc_stc jc_ParseRaw(const char* FPath)
       switch (Tmp)
       {
         case _c_Val:
-          Ret->Stc[Key] = __ParseBin_Val(Stream);
+          Ret->Stc.push_back({Key, __ParseBin_Val(Stream)});
         break;
 
         case _c_Arr:
-          Ret->Stc[Key] = __ParseBin_Arr(Stream);
+          Ret->Stc.push_back({Key, __ParseBin_Arr(Stream)});
         break;
 
         case _c_Stc:
-          Ret->Stc[Key] = __ParseBin_Stc(Stream);
+          Ret->Stc.push_back({Key, __ParseBin_Stc(Stream)});
         break;
       }
 

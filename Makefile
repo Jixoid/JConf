@@ -37,6 +37,9 @@ Clean:
 	@echo
 
 
+ReBuild: Clean Build
+
+
 RPM: Build
 	@echo "♦️ RPM Build"
 	@echo

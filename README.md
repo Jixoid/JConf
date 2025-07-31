@@ -11,7 +11,7 @@ The syntax of JConf is minimal and deterministic. It uses a key-value pair struc
 System: {
   Name: "QAOS"
   Version: 1
-  Modules: [ "core", "net", "ui" ]
+  Modules: [ "core" "net" "ui" ]
 }
 ```
 

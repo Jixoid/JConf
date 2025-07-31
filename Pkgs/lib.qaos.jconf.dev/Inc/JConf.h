@@ -51,9 +51,13 @@ char*   jc_ValGet(jc_val obj);
 bool    jc_ValSet(jc_val obj, const char* value);
 void    jc_DisStr(char *str);
 
+
 jc_obj  jc_StcGet(jc_stc obj, const char* scope);
 bool    jc_StcSet(jc_stc obj, const char* scope, jc_obj object);
 bool    jc_StcDel(jc_stc obj, const char* scope);
+u32     jc_StcC  (jc_stc obj);
+jc_obj  jc_StcInd(jc_stc obj, u32 index, char** Name);
+
 
 u32     jc_ArrC   (jc_arr obj);
 jc_obj  jc_ArrGet (jc_arr obj, u32 index);
