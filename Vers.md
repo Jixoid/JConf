@@ -1,4 +1,9 @@
 
+### v0.9.5:1 [Main]
+  - Added: NestedOverflow Error
+  - Added: C/C++ Docs
+
+___
 ## v0.9.5:0 [Main Daily]
   - Added: types (jc_int, jc_data, jc_bool)
   - Fixed: referance objects

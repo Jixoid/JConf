@@ -12,14 +12,12 @@
 
 #pragma once
 
-#include <format>
 #include <string>
 #include <vector>
-#include <optional>
-#include <variant>
 #include <stdexcept>
 #include <initializer_list>
 
+#include "Basis.h"
 #include "JConf.h"
 
 
@@ -84,7 +82,7 @@ namespace jconf
 
 
     // Binary Data
-    Value(const data_& Val)
+    Value(const data_64& Val)
       : Handle(jc_new_data(Val))
       , IsOwner(true)
     {}
@@ -192,7 +190,7 @@ namespace jconf
       return s ? string(s) : string();
     }
 
-    operator data_() const { return jc_data_get(Handle); }
+    operator data_64() const { return jc_data_get(Handle); }
 
 
     // --- 5. Struct & Array Erişimi ---

@@ -11,7 +11,9 @@ The syntax of JConf is minimal and deterministic. It uses a key-value pair struc
 System: {
   Name: "QAOS"
   Version: 1
-  Modules: [ "core" "net" "ui" ]
+  Active: true
+  Data: @"system.dat"
+  Modules: [ "core" "net" "ui" ]  
 }
 ```
 
@@ -20,7 +22,20 @@ The same structure can be serialized into a binary format for efficient parsing 
 
 ## 🚧 Status
 
-JConf is under active development. The core parser and binary serializer are functional, but the schema validator and advanced tooling are in progress. Expect breaking changes as the format evolves.
+JConf is under active development. The core parser and binary serializer are functional.
+
+Recent additions:
+- Enhanced type safety in C++ bindings.
+
+Expect breaking changes as the format evolves.
+
+
+## 📚 Documentation
+
+Detailed API documentation is available in the `Docs/` directory:
+
+- [**C API Reference**](Docs/API_C.md)
+- [**C++ API Reference**](Docs/API_CPP.md)
 
 
 ## 🤝 Contributions

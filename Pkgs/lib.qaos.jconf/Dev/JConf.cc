@@ -11,22 +11,20 @@
 
 
 
-#include <charconv>
-#include <cstdlib>
-#include <iomanip>
-#include <ratio>
-#define ef  else if
 #define el  else
+#define ef  else if
 
 #include <iostream>
 #include <vector>
 #include <unordered_map>
-#include <unordered_set>
 #include <fstream>
 #include <string.h>
 #include <memory>
 #include <algorithm>
 #include <utility>
+#include <charconv>
+#include <cstdlib>
+#include <iomanip>
 
 #include "Basis.h"
 #include "JConf.h"
@@ -162,6 +160,7 @@ unordered_map<u32, string> Errs = {
   {JC_ERR_UnexpectedWord, "unexpected word"},
   {JC_ERR_InvalidValue, "invalid value"},
   {JC_ERR_ConvertToInteger, "convert to integer"},
+  {JC_ERR_NestedOverflow, "nested overflow"},
 };
 
 
@@ -1042,6 +1041,11 @@ extern "C" jc_stc jc_parse_raw(const char* FPath)
 
 
       // Change root
+      if (Chain.size() >= 256)
+      {
+        JC_ERROR = JC_ERR_NestedOverflow;
+        return Nil;
+      }
       Cov = Stc;
       Chain.push_back(Cov);
 
@@ -1061,6 +1065,11 @@ extern "C" jc_stc jc_parse_raw(const char* FPath)
 
 
       // Change root
+      if (Chain.size() >= 256)
+      {
+        JC_ERROR = JC_ERR_NestedOverflow;
+        return Nil;
+      }
       Cov = Arr;
       Chain.push_back(Cov);
 

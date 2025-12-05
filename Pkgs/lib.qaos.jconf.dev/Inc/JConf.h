@@ -42,7 +42,8 @@ const u32
   JC_ERR_InvalidIdentifier = 4,
   JC_ERR_UnexpectedWord = 5,
   JC_ERR_InvalidValue = 6,
-  JC_ERR_ConvertToInteger = 7;
+  JC_ERR_ConvertToInteger = 7,
+  JC_ERR_NestedOverflow = 8;
 
 u32 jc_err_get();
 const char* jc_err_str();
