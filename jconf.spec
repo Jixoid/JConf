@@ -1,5 +1,5 @@
 Name:           jconf
-Version:        0.9.2
+Version:        0.9.5
 Release:        1%{?dist}
 Summary:        Lightweight configuration library with binary/text format support
 
@@ -32,22 +32,26 @@ Development files for JConf. Required to compile software against libJConf.
 
 %install
 mkdir -p %{buildroot}/usr/lib64
-mkdir -p %{buildroot}/usr/include
+mkdir -p %{buildroot}/usr/include/jconf
 
 # Asıl .so dosyasını kopyala
 install -m 0755 Lib/libJConf.so %{buildroot}/usr/lib64/
+install -m 0755 Lib/libJConf.a %{buildroot}/usr/lib64/
 
 # Header dosyası
-cp Inc/JConf.h %{buildroot}/usr/include/
+install -m 0644 Inc/JConf.h %{buildroot}/usr/include/jconf/
+install -m 0644 Inc/JConf.hh %{buildroot}/usr/include/jconf/
 
 
 %files
 /usr/lib64/libJConf.so
+/usr/lib64/libJConf.a
 
 %files devel
-/usr/include/JConf.h
+/usr/include/jconf/JConf.h
+/usr/include/jconf/JConf.hh
 
 
 %changelog
-* 31/07/2025 Kadir Aydın <jixoid@gmail.com> - 0.9.2
+* 05/12/2025 Kadir Aydın <jixoid@gmail.com> - 0.9.5
 - Please see here https://github.com/Jixoid/JConf

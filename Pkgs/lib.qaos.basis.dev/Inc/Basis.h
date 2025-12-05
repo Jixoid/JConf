@@ -1,11 +1,11 @@
 /*
   This file is part of QAOS
- 
+
   This file is licensed under the GNU General Public License version 3 (GPL3).
- 
+
   You should have received a copy of the GNU General Public License
   along with QAOS. If not, see <https://www.gnu.org/licenses/>.
- 
+
   Copyright (c) 2025 by Kadir Aydın.
 */
 
@@ -16,10 +16,13 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <bits/types.h>
+#include <bits/pthreadtypes.h>
 
 
 #ifdef __cplusplus
 extern "C" {
+namespace jix {}
 #endif
 
 
@@ -43,23 +46,33 @@ typedef  char  c8;
 
 
 // System
-typedef  intptr_t   iPtr;
-typedef  uintptr_t  uPtr;
+#if __WORDSIZE == 64
+  typedef u64 u0;
+  typedef i64 i0;
+#else
+  typedef u32 u0;
+  typedef i32 i0;
+#endif
 
-typedef  uPtr  handle;
-typedef  uPtr  ohid;
+typedef  u0  handle;
+typedef  u0  ohid;
 
 
 // Float
 typedef  float   f32;
 typedef  double  f64;
 
+#if __WORDSIZE == 64
+  typedef f64 f0;
+#else
+  typedef f32 f0;
+#endif
 
 
 // IDs
-typedef  uid_t  idU;
-typedef  gid_t  idG;
-typedef  pid_t  idP;
+typedef  __uid_t  idU;
+typedef  __gid_t  idG;
+typedef  __pid_t  idP;
 typedef  pthread_t  idT;
 
 
@@ -79,8 +92,20 @@ typedef  void*  point;
 typedef struct
 {
   point Point;
-  uPtr  Size;
+  u0    Size;
 } data_;
+
+typedef struct
+{
+  point Point;
+  u64   Size;
+} data_64;
+
+typedef struct
+{
+  point Point;
+  u32   Size;
+} data_32;
 
 
 #ifdef __cplusplus

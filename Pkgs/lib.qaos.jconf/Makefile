@@ -11,7 +11,7 @@
 
 
 
-include ../../Make.inc
+include ../Make.inc
 
 
 # Config
@@ -19,7 +19,7 @@ include ../../Make.inc
 Module = $(notdir $(CURDIR))
 
 Srcs = \
-	Dev/JConf.cpp \
+	Dev/JConf.cc \
 
 Dirs = \
 	../lib.qaos.basis.dev/Inc \
@@ -28,17 +28,17 @@ Dirs = \
 
 Incs = $(foreach dir,$(Dirs),-I$(dir))
 
-Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hpp))
+Deps = $(foreach dir,$(Dirs),$(wildcard $(dir)/*.hh))
 
 Objs = $(addprefix $(Tmp)/, $(basename $(notdir $(Srcs))))
-Objs:= $(addsuffix .bc, $(Objs))
+Objs:= $(addsuffix .o, $(Objs))
 
 
 
 
 # Targets
 
-Build: Basis $(Out)/Package.moq
+Build: Basis $(Out)/Base.moqs
 
 
 Basis:
@@ -48,34 +48,38 @@ Basis:
 
 
 Clean:
-	@rm -rf $(Out)
+	@rm -rf $(GOut)
 
 
 
 # Files
+$(Out)/Base.moqs: $(Out)/Base.moq
+	@echo -e $(L_SG) "$(notdir $@) $(GRAY)(Base.moq Base.sig)$(RESET)"
+	@$(SHA)
+	@$(SIG)
+	@rm -f $(Out)/$(notdir $@)
+	@tar -cf $(Out)/$(notdir $@)  -C $(Out) Base.moq Base.sig
 
-$(Out)/Package.moq: $(Lib)/libJConf.so
-	@echo "  - 📦️ Packing"
 
-	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C @Out Lib
+$(Out)/Base.moq: Package.conf $(Lib)/libJConf.so $(Lib)/libJConf.a
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
+	@$(MQ) Package.conf $(Lib) \
+		$(MQ2)
 
 
 
-$(Lib)/libJConf.so: $(Lib)/libJConf.so.bc
-	@echo "  - 🔨 libJConf.so"
-	@$(CP) -shared $(Lib)/libJConf.so.bc \
+$(Lib)/libJConf.so: $(Objs)
+	@echo -e $(L_LD) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
+	@$(CX) -shared $(Objs) \
 		-o $(Lib)/libJConf.so
 
-
-$(Lib)/libJConf.so.bc: $(Objs)
-	@echo "  - 🔗 libJConf.so.bc"
-	@llvm-link $(Objs) \
-		-o $(Lib)/libJConf.so.bc
+$(Lib)/libJConf.a: $(Objs)
+	@echo -e $(L_AR) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
+	@$(AR) rcs $(Lib)/libJConf.a $(Objs)
 
 
-$(Tmp)/%.bc: */%.cpp $(Deps)
-	@echo "  - ⚙️ $(notdir $@)"
-	@$(LP) -DModule=\"$(Module)\" $(Incs) $< \
+$(Tmp)/%.o: */%.cc $(Deps)
+	@echo -e $(L_CX) "$(notdir $@) $(GRAY)($(notdir $<))$(RESET)"
+	@$(CX) -c -DModule=\"$(Module)\" $(Incs) $< \
 		-o $@
 

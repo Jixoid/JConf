@@ -11,13 +11,13 @@
 
 
 
-include ../../Make.inc
+include ../Make.inc
 
 
 
 # Targets
 
-Build: Basis  $(Out)/Package.moq
+Build: Basis  $(Out)/Base.moqs
 
 
 Basis:
@@ -25,16 +25,21 @@ Basis:
 
 
 Clean:
-	@rm -rf $(Out)
+	@rm -rf $(GOut)
 
 
 
 # Files
+$(Out)/Base.moqs: $(Out)/Base.moq
+	@echo -e $(L_SG) "$(notdir $@) $(GRAY)(Base.moq Base.sig)$(RESET)"
+	@$(SHA)
+	@$(SIG)
+	@rm -f $(Out)/$(notdir $@)
+	@tar -cf $(Out)/$(notdir $@)  -C $(Out) Base.moq Base.sig
 
-$(Out)/Package.moq: Inc/Basis.h
-	@echo "  - 📦️ Packing"
 
-	@rm -f $(Out)/Package.moq
-	@tar -cf $(Out)/Package.moq  -C . Package.conf  -C . Inc
-
+$(Out)/Base.moq: Package.conf Inc/Basis.h
+	@echo -e $(L_MQ) "$(notdir $@) $(GRAY)($(notdir $^))$(RESET)"
+	@$(MQ) Package.conf Inc \
+		$(MQ2)
 

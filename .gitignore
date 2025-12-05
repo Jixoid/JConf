@@ -1,7 +1,10 @@
 # Helpers
 .vscode
+.remote
+.clangd
 
 
 # Compiled
 **/@*
+**/!*
 @RPM

@@ -47,12 +47,10 @@ RPM: Build
   # RPM
 	@rm -rf @RPM
 	@mkdir -p @RPM/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-
-  # JConf
 	@mkdir -p @RPM/SOURCES/jconf/{Inc,Lib}
 
 	@cp Pkgs/lib.qaos.jconf.dev/Inc/*   @RPM/SOURCES/jconf/Inc
-	@cp Pkgs/lib.qaos.jconf/@Out/Lib/*  @RPM/SOURCES/jconf/Lib
+	@cp Pkgs/lib.qaos.jconf/!Out/*/Lib/*  @RPM/SOURCES/jconf/Lib
 
 	@tar czf @RPM/SOURCES/jconf.tar.gz  -C @RPM/SOURCES jconf
 
